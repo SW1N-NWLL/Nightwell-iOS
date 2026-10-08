@@ -3,7 +3,8 @@ name: Build Nightwell iOS
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -14,24 +15,30 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app
+          xcodebuild -version
 
-      - name: Build unsigned iOS app
+      - name: Build Nightwell
         run: |
           xcodebuild \
             -project Nightwell.xcodeproj \
-            -scheme Nightwell \
+            -target Nightwell \
             -configuration Release \
             -sdk iphoneos \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            build
+            CODE_SIGN_IDENTITY=""
 
-      - name: Package IPA
+      - name: Check build
+        run: |
+          ls -la build/Build/Products/Release-iphoneos/
+
+      - name: Create IPA
         run: |
           mkdir -p Payload
-          cp -R build/Build/Products/Release-iphoneos/Nightwell.app Payload/
+          cp -R build/Build/Products/Release-iphoneos/Nightwell.app Payload/Nightwell.app
           zip -r Nightwell-unsigned.ipa Payload
           rm -rf Payload
 
