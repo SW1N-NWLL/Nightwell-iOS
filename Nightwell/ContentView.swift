@@ -4,130 +4,97 @@ import UIKit
 private let discordURL = URL(string: "https://discord.gg/EwXGkGET9Z")!
 
 struct ContentView: View {
-    @State private var selectedTab = 0
-
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem { Label("Главная", systemImage: "house.fill") }
-                .tag(0)
-
-            InfoView()
-                .tabItem { Label("Информация", systemImage: "info.circle.fill") }
-                .tag(1)
-
-            SettingsView()
-                .tabItem { Label("Настройки", systemImage: "gearshape.fill") }
-                .tag(2)
+        TabView {
+            HomeView().tabItem { Label("Главная", systemImage: "house.fill") }
+            InfoView().tabItem { Label("Информация", systemImage: "info.circle.fill") }
+            SettingsView().tabItem { Label("Настройки", systemImage: "gearshape.fill") }
         }
-        .tint(Color(red: 0.66, green: 0.28, blue: 1.0))
+        .tint(Color(red: 0.68, green: 0.30, blue: 1.0))
         .preferredColorScheme(.dark)
     }
 }
 
 struct HomeView: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 22) {
-                    VStack(spacing: 8) {
+        GeometryReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 18) {
+                    VStack(spacing: 5) {
                         Text("NWLL")
-                            .font(.system(size: 58, weight: .black, design: .rounded))
-                            .tracking(5)
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.white, Color(red: 0.70, green: 0.48, blue: 1.0), Color(red: 0.58, green: 0.18, blue: 1.0)],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-
+                            .font(.system(size: min(proxy.size.width * 0.15, 58), weight: .black, design: .rounded))
+                            .tracking(4)
+                            .foregroundStyle(LinearGradient(colors: [.white, Color(red: 0.73, green: 0.52, blue: 1.0), Color(red: 0.57, green: 0.20, blue: 1.0)], startPoint: .leading, endPoint: .trailing))
                         Text("N I G H T W E L L")
-                            .font(.system(size: 13, weight: .bold))
-                            .tracking(5)
-                            .foregroundStyle(.white.opacity(0.42))
+                            .font(.system(size: 11, weight: .semibold))
+                            .tracking(4)
+                            .foregroundStyle(.white.opacity(0.38))
                     }
-                    .padding(.top, 28)
+                    .padding(.top, 14)
 
-                    VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 15) {
                         Text("Nightwell")
-                            .font(.system(size: 28, weight: .bold))
-
+                            .font(.system(size: 27, weight: .bold))
                         Text("Добро пожаловать в официальное приложение сообщества Nightwell.")
-                            .font(.system(size: 18))
-                            .foregroundStyle(.white.opacity(0.68))
+                            .font(.system(size: 17))
+                            .lineSpacing(2)
+                            .foregroundStyle(.white.opacity(0.64))
                             .fixedSize(horizontal: false, vertical: true)
-
                         Button(action: openDiscord) {
                             Label("Открыть Discord", systemImage: "bubble.left.and.bubble.right.fill")
                                 .font(.system(size: 17, weight: .semibold))
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 17)
-                                .background(
-                                    LinearGradient(
-                                        colors: [Color(red: 0.72, green: 0.22, blue: 0.92), Color(red: 0.34, green: 0.08, blue: 0.72)],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 17))
+                                .frame(height: 54)
+                                .background(LinearGradient(colors: [Color(red: 0.72, green: 0.20, blue: 0.94), Color(red: 0.35, green: 0.07, blue: 0.72)], startPoint: .leading, endPoint: .trailing))
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(22)
-                    .background(.white.opacity(0.055))
-                    .overlay(RoundedRectangle(cornerRadius: 24).stroke(.white.opacity(0.06), lineWidth: 1))
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .padding(20)
+                    .background(Color.white.opacity(0.055))
+                    .overlay(RoundedRectangle(cornerRadius: 22).stroke(Color.white.opacity(0.07), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
 
                     HStack(spacing: 12) {
                         Button(action: openDiscord) {
-                            StatusCard(title: "Сообщество", value: "Discord", icon: "person.3.fill")
+                            SmallCard(icon: "person.3.fill", title: "Сообщество", value: "Discord")
                         }
                         .buttonStyle(.plain)
-
-                        Button {
-                            // Эта карточка кликабельна и предназначена для будущего раздела информации.
-                        } label: {
-                            StatusCard(title: "Информация", value: "Подробнее", icon: "info.circle.fill")
+                        Button {} label: {
+                            SmallCard(icon: "info.circle.fill", title: "Информация", value: "Подробнее")
                         }
                         .buttonStyle(.plain)
                     }
+                    Spacer(minLength: 8)
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .padding(.bottom, 18)
+                .frame(maxWidth: 600)
+                .frame(minHeight: proxy.size.height, alignment: .top)
             }
-            .scrollIndicators(.hidden)
-            .background(Color.black.ignoresSafeArea())
-            .toolbar(.hidden, for: .navigationBar)
+            .background(Color.black)
         }
+        .background(Color.black)
     }
 }
 
-struct StatusCard: View {
+struct SmallCard: View {
+    let icon: String
     let title: String
     let value: String
-    let icon: String
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
+        VStack(alignment: .leading, spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(Color(red: 0.70, green: 0.35, blue: 1.0))
-
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.white.opacity(0.48))
-
-            Text(value)
-                .font(.headline)
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .font(.system(size: 19, weight: .semibold))
+                .foregroundStyle(Color(red: 0.70, green: 0.32, blue: 1.0))
+            Text(title).font(.system(size: 13)).foregroundStyle(.white.opacity(0.45))
+            Text(value).font(.system(size: 16, weight: .semibold)).foregroundStyle(.white)
         }
-        .frame(maxWidth: .infinity, minHeight: 112, alignment: .leading)
-        .padding(16)
-        .background(.white.opacity(0.055))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(.white.opacity(0.06), lineWidth: 1))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 105)
+        .padding(.horizontal, 15)
+        .background(Color.white.opacity(0.055))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.07), lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 18))
     }
 }
@@ -137,21 +104,12 @@ struct InfoView: View {
         NavigationStack {
             List {
                 Section("Nightwell") {
-                    Button(action: openDiscord) {
-                        Label("Открыть Discord", systemImage: "bubble.left.and.bubble.right.fill")
-                    }
-                    Button { } label: {
-                        Label("Новости", systemImage: "newspaper.fill")
-                    }
-                    Button { } label: {
-                        Label("Правила сообщества", systemImage: "list.bullet.rectangle.fill")
-                    }
+                    Button(action: openDiscord) { Label("Открыть Discord", systemImage: "bubble.left.and.bubble.right.fill") }
+                    Button {} label: { Label("Новости", systemImage: "newspaper.fill") }
+                    Button {} label: { Label("Правила сообщества", systemImage: "list.bullet.rectangle.fill") }
                 }
-
                 Section("Дополнительно") {
-                    Button { } label: {
-                        Label("Дополнительная информация", systemImage: "doc.text.fill")
-                    }
+                    Button {} label: { Label("Дополнительная информация", systemImage: "doc.text.fill") }
                 }
             }
             .navigationTitle("Информация")
@@ -163,23 +121,15 @@ struct InfoView: View {
 
 struct SettingsView: View {
     @AppStorage("notifications") private var notifications = true
-
     var body: some View {
         NavigationStack {
             Form {
                 Section("Приложение") {
-                    Toggle(isOn: $notifications) {
-                        Label("Уведомления", systemImage: "bell.fill")
-                    }
+                    Toggle(isOn: $notifications) { Label("Уведомления", systemImage: "bell.fill") }
                 }
-
                 Section("Nightwell") {
-                    Button(action: openDiscord) {
-                        Label("Discord", systemImage: "bubble.left.and.bubble.right.fill")
-                    }
-                    Button { } label: {
-                        Label("Обратная связь", systemImage: "envelope.fill")
-                    }
+                    Button(action: openDiscord) { Label("Discord", systemImage: "bubble.left.and.bubble.right.fill") }
+                    Button {} label: { Label("Обратная связь", systemImage: "envelope.fill") }
                     HStack {
                         Label("Версия", systemImage: "app.badge")
                         Spacer()
@@ -194,10 +144,6 @@ struct SettingsView: View {
     }
 }
 
-private func openDiscord() {
-    UIApplication.shared.open(discordURL)
-}
+private func openDiscord() { UIApplication.shared.open(discordURL) }
 
-#Preview {
-    ContentView()
-}
+#Preview { ContentView() }
