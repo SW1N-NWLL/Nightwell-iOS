@@ -36,35 +36,39 @@ jobs:
 
         run: |
 
-          set -e
+          set -euo pipefail
 
-          xcodebuild -project "Nightwell.xcodeproj" -target "Nightwell" -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$GITHUB_WORKSPACE/DerivedData" CONFIGURATION_BUILD_DIR="$GITHUB_WORKSPACE/build" TARGETED_DEVICE_FAMILY=1 INFOPLIST_KEY_UILaunchScreen_Generation=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          xcodebuild -project "$GITHUB_WORKSPACE/Nightwell.xcodeproj" -target Nightwell -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' CONFIGURATION_BUILD_DIR="$GITHUB_WORKSPACE/build" TARGETED_DEVICE_FAMILY=1 INFOPLIST_KEY_UILaunchScreen_Generation=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
       - name: Check build
 
+        shell: bash
+
         run: |
 
-          set -e
+          set -euo pipefail
 
-          echo "Build contents:"
+          test -d "$GITHUB_WORKSPACE/build/Nightwell.app"
 
-          ls -la build/
-
-          test -d build/Nightwell.app
+          ls -la "$GITHUB_WORKSPACE/build/Nightwell.app"
 
       - name: Create IPA
 
+        shell: bash
+
         run: |
 
-          set -e
+          set -euo pipefail
 
-          mkdir -p Payload
+          mkdir -p "$GITHUB_WORKSPACE/Payload"
 
-          cp -R build/Nightwell.app Payload/Nightwell.app
+          cp -R "$GITHUB_WORKSPACE/build/Nightwell.app" "$GITHUB_WORKSPACE/Payload/Nightwell.app"
 
-          zip -r Nightwell-unsigned.ipa Payload
+          cd "$GITHUB_WORKSPACE"
 
-          rm -rf Payload
+          /usr/bin/zip -qr Nightwell-unsigned.ipa Payload
+
+          test -f Nightwell-unsigned.ipa
 
       - name: Upload IPA
 
@@ -75,3 +79,5 @@ jobs:
           name: Nightwell-IPA
 
           path: Nightwell-unsigned.ipa
+
+          if-no-files-found: error
