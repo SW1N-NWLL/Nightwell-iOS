@@ -32,31 +32,13 @@ jobs:
 
       - name: Build Nightwell
 
+        shell: bash
+
         run: |
 
-          xcodebuild \
+          set -e
 
-            -project Nightwell.xcodeproj \
-
-            -target Nightwell \
-
-            -configuration Release \
-
-            -sdk iphoneos \
-
-            -destination 'generic/platform=iOS' \
-
-            CONFIGURATION_BUILD_DIR="$GITHUB_WORKSPACE/build" \
-
-            TARGETED_DEVICE_FAMILY=1 \
-
-            INFOPLIST_KEY_UILaunchScreen_Generation=YES \
-
-            CODE_SIGNING_ALLOWED=NO \
-
-            CODE_SIGNING_REQUIRED=NO \
-
-            CODE_SIGN_IDENTITY=""
+          xcodebuild -project "Nightwell.xcodeproj" -target "Nightwell" -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$GITHUB_WORKSPACE/DerivedData" CONFIGURATION_BUILD_DIR="$GITHUB_WORKSPACE/build" TARGETED_DEVICE_FAMILY=1 INFOPLIST_KEY_UILaunchScreen_Generation=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
       - name: Check build
 
