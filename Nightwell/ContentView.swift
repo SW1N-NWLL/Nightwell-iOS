@@ -23,18 +23,18 @@ struct ContentView: View {
         }
         .tint(Color(red: 0.67, green: 0.28, blue: 1.0))
         .preferredColorScheme(.dark)
+        .toolbarBackground(.hidden, for: .tabBar)
     }
 }
 
 // MARK: - Главная
 
-struct HomeView: View {
-    var body: some View {
-        ZStack {
-            Color.black
-                .ignoresSafeArea()
+var body: some View {
+    ZStack {
+        Color.black
+            .ignoresSafeArea()
 
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
 
                 // Верхняя часть
                 VStack(spacing: 5) {
@@ -188,8 +188,11 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 8)
+                    // Здесь оставь всё содержимое твоего текущего VStack
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    .ignoresSafeArea(.container, edges: [.top, .bottom])
 }
 
 // MARK: - Карточка
